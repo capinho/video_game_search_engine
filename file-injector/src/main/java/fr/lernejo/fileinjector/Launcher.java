@@ -1,7 +1,6 @@
 package fr.lernejo.fileinjector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,12 +22,6 @@ public class Launcher {
                 List<Game> games = Arrays.asList(map.readValue(Paths.get(args[0]).toFile(), Game[].class));
                 RabbitTemplate template = springContext.getBean(RabbitTemplate.class);
                 for (Game game : games) {
-//                    template.setMessageConverter(new Jackson2JsonMessageConverter());
-//                    template.convertAndSend("", "game_info", game, msg -> {
-//                        msg.getMessageProperties().setContentType(MessageProperties.CONTENT_TYPE_JSON);
-//                        msg.getMessageProperties().setHeader("game_id", game.id());
-//                        return msg;
-//                    });
                     template.setMessageConverter(new Jackson2JsonMessageConverter());
                     template.convertAndSend("", "game_info", game, msg -> {
                         msg.getMessageProperties().getHeaders().put("game_id", game.id());
